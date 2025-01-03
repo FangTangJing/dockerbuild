@@ -1,4 +1,4 @@
-FROM alpine:3.21.0
+FROM alpine:3.19
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG repo_src="https://dl-cdn.alpinelinux.org"
@@ -17,7 +17,7 @@ ARG build_deps="acl \
                 busybox-extras \
                 "
 
-ARG glibc_version="2.33-r0"
+ARG glibc_version="2.35-r1"
 ARG glibc_key="https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub"
 ARG glibc_apk="https://github.com/sgerrand/alpine-pkg-glibc/releases/download"
 ARG glibc_sha256="823b54589c93b02497f1ba4dc622eaef9c813e6b0f0ebbb2f771e32adf9f4ef2"
