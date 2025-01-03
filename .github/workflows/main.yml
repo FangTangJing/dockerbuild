@@ -38,4 +38,4 @@ jobs:
              linux/s390x
           push: true
           tags: |
-               ${{ env.ACR_REPO }}/${{ env.PROJECT }}/alpine:3.21.0
+               ${{ env.ACR_REPO }}/${{ env.ACR_PROJECT }}/alpine:3.21.0
