@@ -1,4 +1,4 @@
-FROM alpine:3.21.0
+FROM alpine:3.19
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG repo_src="https://dl-cdn.alpinelinux.org"
