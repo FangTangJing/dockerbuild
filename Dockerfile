@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.21.0
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG repo_src="https://dl-cdn.alpinelinux.org"
@@ -17,7 +17,7 @@ ARG build_deps="acl \
                 busybox-extras \
                 "
 
-ARG glibc_version="2.35-r1"
+ARG glibc_version="2.33-r0"
 ARG glibc_key="https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub"
 ARG glibc_apk="https://github.com/sgerrand/alpine-pkg-glibc/releases/download"
 ARG glibc_sha256="823b54589c93b02497f1ba4dc622eaef9c813e6b0f0ebbb2f771e32adf9f4ef2"
@@ -35,9 +35,9 @@ RUN sed -i s@${repo_src}@${repo_dest}@g ${repo_file} && \
     cp -rfv /usr/share/zoneinfo/${timezone} /etc/localtime && \
     curl -LfsS ${glibc_key} -o /etc/apk/keys/sgerrand.rsa.pub && \
     echo "${glibc_sha256} */etc/apk/keys/sgerrand.rsa.pub" | sha256sum -c - && \
-    curl -LfsS ${glibc_apk}/${glibc_version}/glibc-${glibc_version}.apk >/tmp/glibc-${glibc_version}.apk && \
-    curl -LfsS ${glibc_apk}/${glibc_version}/glibc-bin-${glibc_version}.apk >/tmp/glibc-bin-${glibc_version}.apk && \
-    curl -Ls ${glibc_apk}/${glibc_version}/glibc-i18n-${glibc_version}.apk >/tmp/glibc-i18n-${glibc_version}.apk && \
+    curl -LfsS ${glibc_apk}/${glibc_version}/glibc-${glibc_version}.apk > /tmp/glibc-${glibc_version}.apk && \
+    curl -LfsS ${glibc_apk}/${glibc_version}/glibc-bin-${glibc_version}.apk > /tmp/glibc-bin-${glibc_version}.apk && \
+    curl -Ls ${glibc_apk}/${glibc_version}/glibc-i18n-${glibc_version}.apk > /tmp/glibc-i18n-${glibc_version}.apk && \
     apk --no-cache add /tmp/glibc-${glibc_version}.apk && \
     rm -rf /usr/glibc-compat/lib/ld-linux-x86-64.so.2 && \
     ln -s /usr/glibc-compat/lib/ld-2.31.so /usr/glibc-compat/lib/ld-linux-x86-64.so.2 && \
@@ -45,7 +45,7 @@ RUN sed -i s@${repo_src}@${repo_dest}@g ${repo_file} && \
     apk --no-cache add /tmp/glibc-i18n-${glibc_version}.apk && \
     sed -i 's#/usr/bin/bash#/bin/bash#' /usr/glibc-compat/bin/ldd && \
     /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 && \
-    echo "export LANG=$LANG" >/etc/profile.d/locale.sh && \
+    echo "export LANG=$LANG" > /etc/profile.d/locale.sh && \
     curl -LfsS ${gcc_libs_url} -o /tmp/gcc-libs.tar.zst && \
     echo "${gcc_libs_sha256} */tmp/gcc-libs.tar.zst" | sha256sum -c - && \
     mkdir /tmp/gcc && \
