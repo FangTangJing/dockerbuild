@@ -37,4 +37,4 @@ jobs:
              linux/ppc64le
              linux/s390x
           push: true
-          tags: ${{ env.ACR_URL }}/${{ env.ACR_PROJECT }}/alpine:3.21.0
+          tags: ${{ env.ACR_REPO }}/${{ env.ACR_PROJECT }}/alpine:3.21.0
