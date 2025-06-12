@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/nodejs:16.20.2
+               registry.cn-shanghai.aliyuncs.com/devops_infra/kafka:2.4.0
