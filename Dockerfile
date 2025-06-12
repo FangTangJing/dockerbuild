@@ -1,4 +1,4 @@
-FROM k8sre/alpine:3.12
+FROM kubeop/alpine:3.21
 LABEL MAINTAINER="smile_joker1514@163.com"
 
 ARG KAFKA_VERSION=2.4.0
