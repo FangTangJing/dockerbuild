@@ -8,8 +8,8 @@ ENV KAFKA_DATA_DIR=/var/lib/kafka/data \
     KAFKA_HOME=/opt/kafka \
     PATH=$PATH:/opt/kafka/bin
 
-RUN set -x && \
-    apk upgrade --update && \
-    curl -Ljk https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz | tar zxf - && \
-    mv /${KAFKA_DIST} ${KAFKA_HOME} && \
+RUN set -x ; \
+    apk upgrade --update ; \
+    curl -Ljk https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz | tar zxf - ; \
+    mv /${KAFKA_DIST} ${KAFKA_HOME} ; \
     mkdir -p $KAFKA_DATA_DIR
