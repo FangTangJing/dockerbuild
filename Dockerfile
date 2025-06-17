@@ -1,15 +1,28 @@
-FROM kubeop/alpine:3.21
-LABEL MAINTAINER="smile_joker1514@163.com"
+FROM alpine:3.22.0
+LABEL maintainer="smile_joker1514@163.com"
 
-ARG KAFKA_VERSION=2.4.0
-ARG KAFKA_DIST=kafka_2.12-2.4.0
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV LC_ALL="en_US.UTF-8"
+ENV TZ="Asia/Shanghai"
 
-ENV KAFKA_DATA_DIR=/var/lib/kafka/data \
-    KAFKA_HOME=/opt/kafka \
-    PATH=$PATH:/opt/kafka/bin
+RUN set -eux; \
+        sed -i s@dl-cdn.alpinelinux.org@mirrors.aliyun.com@g /etc/apk/repositories; \
+        apk upgrade --update; \
+        apk add --no-cache \
+            acl \
+            tini \
+            curl \
+            sudo \
+            bash \
+            tzdata \
+            dnscache \
+            libgcc \
+            libstdc++ \
+            ca-certificates \
+            busybox-extras \
+        ; \
+        rm -rf /var/cache/apk/*; \
+        cp -rfv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-RUN set -x ; \
-    apk upgrade --update ; \
-    curl -Ljk https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz | tar zxf - ; \
-    mv /${KAFKA_DIST} ${KAFKA_HOME} ; \
-    mkdir -p $KAFKA_DATA_DIR
+CMD ["/bin/bash"]
