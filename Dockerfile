@@ -26,7 +26,6 @@ RUN set -eux; \
     yum clean all
 
 ENV JAVA_VERSION=jdk8u462-b08
-ENV VERSION=8u462-b08
 
 
 
@@ -35,15 +34,15 @@ RUN set -eux; \
     case "${ARCH}" in \
        aarch64) \
          ESUM='c34506736ab52768c59660a5d4246b94f57543c79b7e4b53d322dda3ec4a9302'; \
-         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_aarch64_linux_hotspot_${VERSION}.tar.gz'; \
+         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_aarch64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz'; \
          ;; \
        ppc64le) \
          ESUM='15391b2d1bf613abd739f6ad6eeb728f4803d901cceae0d83f6bbd00da7751bf'; \
-         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_ppc64le_linux_hotspot_${VERSION}.tar.gz'; \
+         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_ppc64le_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz'; \
          ;; \
        x86_64) \
          ESUM='6e83ffc37da053352ccaa2fd3bd7d813b9674d87aa01b35ac3e54903cd33b0d8'; \
-         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_x64_linux_hotspot_${VERSION}.tar.gz'; \
+         BINARY_URL='https://github.com/adoptium/temurin8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_x64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
