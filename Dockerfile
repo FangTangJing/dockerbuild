@@ -1,40 +1,54 @@
-FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
-LABEL maintainer="smile_joker1514@163.com"
+# 使用官方 Node.js 18 Alpine 镜像作为基础镜像
+FROM node:18-alpine AS base
 
-ARG GOLANG_VERSION=1.25.0
+# 安装依赖阶段
+FROM base AS deps
+# 检查 https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
-ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn,direct
-ENV PATH=/usr/local/go/bin:$PATH
+# 安装依赖
+COPY package.json pnpm-lock.yaml* ./
+RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
-RUN set -eux; \
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-            g++ \
-            gcc \
-            git \
-            libc6-dev \
-            make \
-            pkg-config \
-        ; \
-        rm -rf /var/lib/apt/lists/*; \
-        arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-        case "$arch" in \
-            'amd64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            'arm64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            *) \
-                echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
-        esac; \
-        curl -Ljk $url | tar zxvf - -C /usr/local/; \
-        go version
+# 构建阶段
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-ENV GOTOOLCHAIN=local
+# 设置环境变量
+ENV NEXT_TELEMETRY_DISABLED 1
 
-ENV GOPATH=/go
-ENV PATH=$GOPATH/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
-WORKDIR $GOPATH
+# 构建应用
+RUN corepack enable pnpm && pnpm run build
+
+# 运行阶段
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# 复制构建产物
+COPY --from=builder /app/public ./public
+
+# 设置正确的权限
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# 复制构建产物和依赖
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
