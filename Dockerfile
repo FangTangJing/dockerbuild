@@ -1,4 +1,4 @@
-FROM registry.cn-shanghai.aliyuncs.com/infra/debian:13
+FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG GOLANG_VERSION=1.25.0
