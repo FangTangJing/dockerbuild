@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/python:3.11.13
+               registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:openeuler-8
