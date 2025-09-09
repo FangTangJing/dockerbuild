@@ -17,6 +17,7 @@ RUN set -eux; \
         binutils \
         tzdata \
         wget \
+        bash \
         ca-certificates \
         openssl \
         fontconfig \
