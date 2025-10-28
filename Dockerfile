@@ -21,10 +21,10 @@ RUN set -eux; \
       arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
       case "${arch}" in \
         aarch64|arm64) \
-          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jre_aarch64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
+          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jdk_aarch64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
           ;; \
         amd64|i386:x86-64) \
-          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jre_x64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
+          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jdk_x64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
           ;; \
         *) \
           echo "Unsupported arch: ${arch}"; \
@@ -41,6 +41,7 @@ RUN set -eux; \
 
 RUN set -eux; \
     echo "Verifying install ..."; \
+    echo "javac -version"; javac -version; \
     echo "java -version"; java -version; \
     echo "Complete."
 
