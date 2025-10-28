@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/patroni-pgsql:17
+               registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:debian13-8-jre
