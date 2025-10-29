@@ -1,48 +1,42 @@
 FROM kubeop/debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG JAVA_VERSION=8u462-b08
-ENV JAVA_HOME="/usr/local/openjdk"
-ENV PATH=${JAVA_HOME}/bin:${PATH}
+ARG GOLANG_VERSION=1.25.3
 
-COPY --chmod=755 entrypoint.sh /__cacert_entrypoint.sh
-
-RUN set -eux; \
-      apt-get update; \
-      apt-get install -y --no-install-recommends \
-              # utilities for keeping Ubuntu and OpenJDK CA certificates in sync
-              # https://github.com/adoptium/containers/issues/293
-              ca-certificates \
-              fontconfig \
-              p11-kit \
-              binutils \
-      ; \
-      rm -rf /var/lib/apt/lists/*; \
-      arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-      case "${arch}" in \
-        aarch64|arm64) \
-          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jdk_aarch64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
-          ;; \
-        amd64|i386:x86-64) \
-          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jdk_x64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
-          ;; \
-        *) \
-          echo "Unsupported arch: ${arch}"; \
-          exit 1; \
-          ;; \
-      esac; \
-      mkdir -p "$JAVA_HOME"; \
-      curl -Ljk ${BINARY_URL} | tar zxvf - --strip-components 1 -C ${JAVA_HOME}; \
-      rm -f ${JAVA_HOME}/lib/src.zip; \
-      chmod +x /__cacert_entrypoint.sh; \
-      # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
-      find "$JAVA_HOME/lib" -name '*.so' -exec dirname '{}' ';' | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
-      ldconfig;
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn,direct
+ENV PATH=/usr/local/go/bin:$PATH
 
 RUN set -eux; \
-    echo "Verifying install ..."; \
-    echo "javac -version"; javac -version; \
-    echo "java -version"; java -version; \
-    echo "Complete."
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+            g++ \
+            gcc \
+            git \
+            libc6-dev \
+            make \
+            pkg-config \
+        ; \
+        rm -rf /var/lib/apt/lists/*; \
+        arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+        case "$arch" in \
+            'amd64') \
+                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
+                ;; \
+            'arm64') \
+                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
+                ;; \
+            *) \
+                echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
+        esac; \
+        curl -Ljk $url | tar zxvf - -C /usr/local/; \
+        go version
 
-ENTRYPOINT ["/__cacert_entrypoint.sh"]
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local
+
+ENV GOPATH=/go
+ENV PATH=$GOPATH/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
+WORKDIR $GOPATH

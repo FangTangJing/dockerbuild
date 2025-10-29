@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:debian13-8-jdk
+               registry.cn-shanghai.aliyuncs.com/devops_infra/golang:1.25.3
