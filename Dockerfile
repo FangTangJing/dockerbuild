@@ -1,42 +1,32 @@
-FROM kubeop/debian:13
-LABEL maintainer="smile_joker1514@163.com"
+FROM registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:debian13-8-jdk
+LABEL maintainer="smile_joker1514@1514.com"
 
-ARG GOLANG_VERSION=1.25.3
+ARG MAVEN_VERSION=3.9.11
+ARG user=jenkins
+ARG group=jenkins
+ARG uid=1000
+ARG gid=1000
 
-ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn,direct
-ENV PATH=/usr/local/go/bin:$PATH
+ENV MAVEN_HOME=/usr/share/maven
 
 RUN set -eux; \
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-            g++ \
-            gcc \
+      apt-get update; \
+      apt-get install -y --no-install-recommends \
+            ca-certificates \
+            curl \
             git \
-            libc6-dev \
-            make \
-            pkg-config \
-        ; \
-        rm -rf /var/lib/apt/lists/*; \
-        arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-        case "$arch" in \
-            'amd64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            'arm64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            *) \
-                echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
-        esac; \
-        curl -Ljk $url | tar zxvf - -C /usr/local/; \
-        go version
+            openssh-client \
+      ; \
+      rm -rf /var/lib/apt/lists/*; \
+      groupadd -g ${gid} ${group}; \
+      useradd -u ${uid} -g ${gid} -l -m -s /bin/bash ${user}; \
+      curl -fsSLO --compressed https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
+      mkdir -p ${MAVEN_HOME}; \
+      tar -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C ${MAVEN_HOME} --strip-components=1; \
+      rm apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
+      ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn; \
+      mvn --version
 
-# don't auto-upgrade the gotoolchain
-# https://github.com/docker-library/golang/issues/472
-ENV GOTOOLCHAIN=local
+COPY settings.xml ${MAVEN_HOME}/conf/settings.xml
 
-ENV GOPATH=/go
-ENV PATH=$GOPATH/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
-WORKDIR $GOPATH
+USER jenkins
