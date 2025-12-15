@@ -1,32 +1,30 @@
-FROM registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:debian13-8-jdk
-LABEL maintainer="smile_joker1514@1514.com"
+FROM debian:13
+LABEL maintainer="smile_joker1514@163.com"
 
-ARG MAVEN_VERSION=3.9.11
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
-
-ENV MAVEN_HOME=/usr/share/maven
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV LC_ALL="en_US.UTF-8"
+ENV TZ="Asia/Shanghai"
 
 RUN set -eux; \
-      apt-get update; \
-      apt-get install -y --no-install-recommends \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
             ca-certificates \
+            iputils-ping \
+            vim-tiny \
+            iproute2 \
+            dnsutils \
+            locales \
+            telnet \
+            procps \
             curl \
-            git \
-            openssh-client \
-      ; \
-      rm -rf /var/lib/apt/lists/*; \
-      groupadd -g ${gid} ${group}; \
-      useradd -u ${uid} -g ${gid} -l -m -s /bin/bash ${user}; \
-      curl -fsSLO --compressed https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
-      mkdir -p ${MAVEN_HOME}; \
-      tar -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C ${MAVEN_HOME} --strip-components=1; \
-      rm apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
-      ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn; \
-      mvn --version
+            tini \
+        ; \
+        sed -i "s#http://deb.debian.org#https://mirrors.aliyun.com#g" /etc/apt/sources.list.d/debian.sources; \
+        ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen; \
+        locale-gen en_US.UTF-8; \
+        echo "set nocompatible\nset backspace=2" >> /etc/vim/vimrc.tiny; \
+        rm -rf /var/lib/apt/lists/*
 
-COPY settings.xml ${MAVEN_HOME}/conf/settings.xml
-
-USER jenkins
+CMD ["/bin/bash"]
