@@ -1,28 +1,47 @@
-FROM alpine:3.23.2
+FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
-ENV LANG="en_US.UTF-8"
-ENV LANGUAGE="en_US:en"
-ENV LC_ALL="en_US.UTF-8"
-ENV TZ="Asia/Shanghai"
+ARG JAVA_VERSION=8u462-b08
+ENV JAVA_HOME="/usr/local/openjdk"
+ENV PATH=${JAVA_HOME}/bin:${PATH}
+
+COPY --chmod=755 entrypoint.sh /__cacert_entrypoint.sh
 
 RUN set -eux; \
-        sed -i s@dl-cdn.alpinelinux.org@mirrors.ustc.edu.cn@g /etc/apk/repositories; \
-        apk upgrade --update; \
-        apk add --no-cache \
-            acl \
-            tini \
-            curl \
-            sudo \
-            bash \
-            tzdata \
-            dnscache \
-            libgcc \
-            libstdc++ \
-            ca-certificates \
-            busybox-extras \
-        ; \
-        rm -rf /var/cache/apk/*; \
-        cp -rfv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+      apt-get update; \
+      apt-get install -y --no-install-recommends \
+              # utilities for keeping Ubuntu and OpenJDK CA certificates in sync
+              # https://github.com/adoptium/containers/issues/293
+              ca-certificates \
+              fontconfig \
+              p11-kit \
+              binutils \
+      ; \
+      rm -rf /var/lib/apt/lists/*; \
+      arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+      case "${arch}" in \
+        aarch64|arm64) \
+          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jre_aarch64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
+          ;; \
+        amd64|i386:x86-64) \
+          BINARY_URL="https://github.com/adoptium/temurin8-binaries/releases/download/jdk${JAVA_VERSION}/OpenJDK8U-jre_x64_linux_hotspot_$(echo ${JAVA_VERSION} | tr -d '-').tar.gz"; \
+          ;; \
+        *) \
+          echo "Unsupported arch: ${arch}"; \
+          exit 1; \
+          ;; \
+      esac; \
+      mkdir -p "$JAVA_HOME"; \
+      curl -Ljk ${BINARY_URL} | tar zxvf - --strip-components 1 -C ${JAVA_HOME}; \
+      rm -f ${JAVA_HOME}/lib/src.zip; \
+      chmod +x /__cacert_entrypoint.sh; \
+      # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
+      find "$JAVA_HOME/lib" -name '*.so' -exec dirname '{}' ';' | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
+      ldconfig;
 
-CMD ["/bin/bash"]
+RUN set -eux; \
+    echo "Verifying install ..."; \
+    echo "java -version"; java -version; \
+    echo "Complete."
+
+ENTRYPOINT ["/__cacert_entrypoint.sh"]
