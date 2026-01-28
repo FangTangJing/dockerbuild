@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/golang:1.25.6
+               registry.cn-shanghai.aliyuncs.com/devops_infra/python:3.14.2
