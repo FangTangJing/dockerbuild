@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/python:3.14.3
+               registry.cn-shanghai.aliyuncs.com/devops_infra/python:3.13.12
