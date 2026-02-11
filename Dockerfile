@@ -1,104 +1,42 @@
 FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG PYTHON_VERSION=3.13.12
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONIOENCODING=UTF-8
+ARG GOLANG_VERSION=1.26.0
+
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn,direct
+ENV PATH=/usr/local/go/bin:$PATH
 
 RUN set -eux; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
-                libbluetooth-dev \
-                libssl-dev \
-                libffi-dev \
-                libzstd-dev \
-                gcc \
-                tk-dev \
-                uuid-dev \
+            g++ \
+            gcc \
+            git \
+            libc6-dev \
+            make \
+            pkg-config \
         ; \
         rm -rf /var/lib/apt/lists/*; \
-        curl -fsSL -o python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
-        mkdir -p /usr/src/python; \
-        tar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \
-        rm python.tar.xz; \
-        \
-        cd /usr/src/python; \
-        gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-        ./configure \
-                --build="$gnuArch" \
-                --enable-loadable-sqlite-extensions \
-                --enable-optimizations \
-                --enable-option-checking=fatal \
-                --enable-shared \
-                --with-lto \
-                --with-ensurepip \
-        ; \
-        nproc="$(nproc)"; \
-        EXTRA_CFLAGS="$(dpkg-buildflags --get CFLAGS)"; \
-        LDFLAGS="$(dpkg-buildflags --get LDFLAGS)"; \
-	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-# https://docs.python.org/3.12/howto/perf_profiling.html
-# https://github.com/docker-library/python/pull/1000#issuecomment-2597021615
-	case "$arch" in \
-		amd64|arm64) \
-			# only add "-mno-omit-leaf" on arches that support it
-			# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/x86-Options.html#index-momit-leaf-frame-pointer-2
-			# https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/AArch64-Options.html#index-momit-leaf-frame-pointer
-			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"; \
-			;; \
-		i386) \
-			# don't enable frame-pointers on 32bit x86 due to performance drop.
-			;; \
-		*) \
-			# other arches don't support "-mno-omit-leaf"
-			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer"; \
-			;; \
-	esac; \
-        make -j "$nproc" \
-                "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-                "LDFLAGS=${LDFLAGS:-}" \
-        ; \
-# https://github.com/docker-library/python/issues/784
-# prevent accidental usage of a system installed libpython of the same version
-        rm python; \
-        make -j "$nproc" \
-                "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-                "LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-                python \
-        ; \
-        make install; \
-        \
-# enable GDB to load debugging data: https://github.com/docker-library/python/pull/701
-        bin="$(readlink -ve /usr/local/bin/python3)"; \
-        dir="$(dirname "$bin")"; \
-        mkdir -p "/usr/share/gdb/auto-load/$dir"; \
-        cp -vL Tools/gdb/libpython.py "/usr/share/gdb/auto-load/$bin-gdb.py"; \
-        \
-        cd /; \
-        rm -rf /usr/src/python; \
-        \
-        find /usr/local -depth \
-                \( \
-                        \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-                        -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
-                \) -exec rm -rf '{}' + \
-        ; \
-        \
-        ldconfig; \
-        \
-        export PYTHONDONTWRITEBYTECODE=1; \
-        python3 --version; \
-        pip3 --version; \
-        pip3 config set global.index-url https://mirrors.ustc.edu.cn/pypi/simple; \
-        pip3 config set install.trusted-host https://mirrors.ustc.edu.cn
+        arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+        case "$arch" in \
+            'amd64') \
+                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
+                ;; \
+            'arm64') \
+                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
+                ;; \
+            *) \
+                echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
+        esac; \
+        curl -Ljk $url | tar zxvf - -C /usr/local/; \
+        go version
 
-# make some useful symlinks that are expected to exist ("/usr/local/bin/python" and friends)
-RUN set -eux; \
-        for src in idle3 pip3 pydoc3 python3 python3-config; do \
-                dst="$(echo "$src" | tr -d 3)"; \
-                [ -s "/usr/local/bin/$src" ]; \
-                [ ! -e "/usr/local/bin/$dst" ]; \
-                ln -svT "$src" "/usr/local/bin/$dst"; \
-        done
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local
 
-CMD ["python3"]
+ENV GOPATH=/go
+ENV PATH=$GOPATH/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
+WORKDIR $GOPATH
