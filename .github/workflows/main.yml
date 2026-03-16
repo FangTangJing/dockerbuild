@@ -40,4 +40,4 @@ jobs:
 #              linux/s390x
           push: true
           tags: |
-               registry.cn-shanghai.aliyuncs.com/devops_infra/maven:3.9.14-rdkx-nexus
+               registry.cn-shanghai.aliyuncs.com/devops_infra/alpine:3.23.3

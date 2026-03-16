@@ -1,32 +1,28 @@
-FROM registry.cn-shanghai.aliyuncs.com/devops_infra/openjdk:8-jdk
+FROM alpine:3.23.3
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG MAVEN_VERSION=3.9.14
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
-
-ENV MAVEN_HOME=/usr/share/maven
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV LC_ALL="en_US.UTF-8"
+ENV TZ="Asia/Shanghai"
 
 RUN set -eux; \
-      apt-get update; \
-      apt-get install -y --no-install-recommends \
-            ca-certificates \
+        sed -i s@dl-cdn.alpinelinux.org@mirrors.nju.edu.cn@g /etc/apk/repositories; \
+        apk upgrade --update; \
+        apk add --no-cache \
+            acl \
+            tini \
             curl \
-            git \
-            openssh-client \
-      ; \
-      rm -rf /var/lib/apt/lists/*; \
-      groupadd -g ${gid} ${group}; \
-      useradd -u ${uid} -g ${gid} -l -m -s /bin/bash ${user}; \
-      curl -fsSLO --compressed https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
-      mkdir -p ${MAVEN_HOME}; \
-      tar -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C ${MAVEN_HOME} --strip-components=1; \
-      rm apache-maven-${MAVEN_VERSION}-bin.tar.gz; \
-      ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn; \
-      mvn --version
+            sudo \
+            bash \
+            tzdata \
+            dnscache \
+            libgcc \
+            libstdc++ \
+            ca-certificates \
+            busybox-extras \
+        ; \
+        rm -rf /var/cache/apk/*; \
+        cp -rfv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-COPY settings.xml ${MAVEN_HOME}/conf/settings.xml
-
-USER jenkins
+CMD ["/bin/bash"]
