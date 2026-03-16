@@ -1,42 +1,30 @@
-FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
+FROM debian:13.4
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG GOLANG_VERSION=1.26.0
-
-ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn,direct
-ENV PATH=/usr/local/go/bin:$PATH
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV LC_ALL="en_US.UTF-8"
+ENV TZ="Asia/Shanghai"
 
 RUN set -eux; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
-            g++ \
-            gcc \
-            git \
-            libc6-dev \
-            make \
-            pkg-config \
+            ca-certificates \
+            iputils-ping \
+            vim-tiny \
+            iproute2 \
+            dnsutils \
+            locales \
+            telnet \
+            procps \
+            curl \
+            tini \
         ; \
-        rm -rf /var/lib/apt/lists/*; \
-        arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-        case "$arch" in \
-            'amd64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            'arm64') \
-                url="https://golang.google.cn/dl/go${GOLANG_VERSION}.linux-${arch}.tar.gz"; \
-                ;; \
-            *) \
-                echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
-        esac; \
-        curl -Ljk $url | tar zxvf - -C /usr/local/; \
-        go version
+        sed -i "s#http://deb.debian.org#https://mirrors.aliyun.com#g" /etc/apt/sources.list.d/debian.sources; \
+        ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen; \
+        locale-gen en_US.UTF-8; \
+        echo "set nocompatible\nset backspace=2" >> /etc/vim/vimrc.tiny; \
+        rm -rf /var/lib/apt/lists/*
 
-# don't auto-upgrade the gotoolchain
-# https://github.com/docker-library/golang/issues/472
-ENV GOTOOLCHAIN=local
-
-ENV GOPATH=/go
-ENV PATH=$GOPATH/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
-WORKDIR $GOPATH
+CMD ["/bin/bash"]
