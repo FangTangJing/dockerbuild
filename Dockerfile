@@ -1,4 +1,4 @@
-FROM debian:13.4
+FROM debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
 ENV LANG="en_US.UTF-8"
