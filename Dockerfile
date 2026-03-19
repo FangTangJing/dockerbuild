@@ -1,28 +1,30 @@
-FROM alpine:3.23.3
+FROM debian:13.4
 LABEL maintainer="smile_joker1514@163.com"
 
-ENV LANG="en_US.UTF-8"
-ENV LANGUAGE="en_US:en"
+ENV LANG="en_US.UTF-8" 
+ENV LANGUAGE="en_US:en" 
 ENV LC_ALL="en_US.UTF-8"
 ENV TZ="Asia/Shanghai"
 
 RUN set -eux; \
-        sed -i s@dl-cdn.alpinelinux.org@mirrors.nju.edu.cn@g /etc/apk/repositories; \
-        apk upgrade --update; \
-        apk add --no-cache \
-            acl \
-            tini \
-            curl \
-            sudo \
-            bash \
-            tzdata \
-            dnscache \
-            libgcc \
-            libstdc++ \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
             ca-certificates \
-            busybox-extras \
+            iputils-ping \
+            vim-tiny \
+            iproute2 \
+            dnsutils \
+            locales \
+            telnet \
+            procps \
+            curl \
+            tini \
         ; \
-        rm -rf /var/cache/apk/*; \
-        cp -rfv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        sed -i "s#http://deb.debian.org#https://mirrors.aliyun.com#g" /etc/apt/sources.list.d/debian.sources; \
+        ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen; \
+        locale-gen en_US.UTF-8; \
+        echo "set nocompatible\nset backspace=2" >> /etc/vim/vimrc.tiny; \
+        rm -rf /var/lib/apt/lists/*
 
 CMD ["/bin/bash"]
