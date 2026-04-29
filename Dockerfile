@@ -132,7 +132,7 @@ RUN set -x \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY default.conf /etc/nginx/http.d/default.conf
 
-COPY docker-entrypoint.sh /
+COPY --chown=nginx:nginx docker-entrypoint.sh /
 COPY 10-listen-on-ipv6-by-default.sh /docker-entrypoint.d
 COPY 15-local-resolvers.envsh /docker-entrypoint.d
 COPY 20-envsubst-on-templates.sh /docker-entrypoint.d
