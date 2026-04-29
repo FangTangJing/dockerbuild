@@ -2,7 +2,7 @@ FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.4
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG NGINX_VERSION=1.29.8
-ARG NJS_VERSION=0.9.4
+ARG NJS_VERSION=0.9.6
 ARG NJS_RELEASE=1~trixie
 ARG PKG_RELEASE=1~trixie
 ARG DYNPKG_RELEASE=1~trixie
