@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
 ME=$(basename "$0")
 
 entrypoint_log() {
-    if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
-        echo "$@"
-    fi
+  if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
+    echo "$@"
+  fi
 }
 
 add_stream_block() {

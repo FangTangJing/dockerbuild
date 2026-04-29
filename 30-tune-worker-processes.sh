@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # vim:sw=2:ts=2:sts=2:et
 
 set -eu
@@ -24,13 +24,13 @@ get_cpuset() {
   [ -f "$cpusetroot/$cpusetfile" ] || return 1
   for token in $( tr ',' ' ' < "$cpusetroot/$cpusetfile" ); do
     case "$token" in
-      *-*)
-        count=$( seq $(echo "$token" | tr '-' ' ') | wc -l )
-        ncpu=$(( ncpu+count ))
-        ;;
-      *)
-        ncpu=$(( ncpu+1 ))
-        ;;
+    *-*)
+      count=$( seq $(echo "$token" | tr '-' ' ') | wc -l )
+      ncpu=$(( ncpu+count ))
+      ;;
+    *)
+      ncpu=$(( ncpu+1 ))
+      ;;
     esac
   done
   echo "$ncpu"
@@ -74,23 +74,23 @@ get_cgroup_v1_path() {
 
   while IFS= read -r line; do
     case "$needle" in
-      "cpuset")
-        case "$line" in
-          *cpuset*)
-            found=$( echo "$line" | cut -d ' ' -f 4,5 )
-            break
-            ;;
-        esac
+    "cpuset")
+      case "$line" in
+      *cpuset*)
+        found=$( echo "$line" | cut -d ' ' -f 4,5 )
+        break
         ;;
-      "cpu")
-        case "$line" in
-          *cpuset*)
-            ;;
-          *cpu,cpuacct*|*cpuacct,cpu|*cpuacct*|*cpu*)
-            found=$( echo "$line" | cut -d ' ' -f 4,5 )
-            break
-            ;;
-        esac
+      esac
+      ;;
+    "cpu")
+      case "$line" in
+      *cpuset*)
+        ;;
+      *cpu,cpuacct*|*cpuacct,cpu|*cpuacct*|*cpu*)
+        found=$( echo "$line" | cut -d ' ' -f 4,5 )
+        break
+        ;;
+      esac
     esac
   done << __EOF__
 $( grep -F -- '- cgroup ' /proc/self/mountinfo )
@@ -99,34 +99,34 @@ __EOF__
   while IFS= read -r line; do
     controller=$( echo "$line" | cut -d: -f 2 )
     case "$needle" in
-      "cpuset")
-        case "$controller" in
-          cpuset)
-            mountpoint=$( echo "$line" | cut -d: -f 3 )
-            break
-            ;;
-        esac
+    "cpuset")
+      case "$controller" in
+      cpuset)
+        mountpoint=$( echo "$line" | cut -d: -f 3 )
+        break
         ;;
-      "cpu")
-        case "$controller" in
-          cpu,cpuacct|cpuacct,cpu|cpuacct|cpu)
-            mountpoint=$( echo "$line" | cut -d: -f 3 )
-            break
-            ;;
-        esac
+      esac
+      ;;
+    "cpu")
+      case "$controller" in
+      cpu,cpuacct|cpuacct,cpu|cpuacct|cpu)
+        mountpoint=$( echo "$line" | cut -d: -f 3 )
+        break
         ;;
+      esac
+      ;;
     esac
-done << __EOF__
+  done << __EOF__
 $( grep -F -- 'cpu' /proc/self/cgroup )
 __EOF__
 
   case "${found%% *}" in
-    "/")
-      foundroot="${found##* }$mountpoint"
-      ;;
-    "$mountpoint")
-      foundroot="${found##* }"
-      ;;
+  "/")
+    foundroot="${found##* }$mountpoint"
+    ;;
+  "$mountpoint")
+    foundroot="${found##* }"
+    ;;
   esac
   echo "$foundroot"
 }
@@ -147,20 +147,20 @@ __EOF__
 
   while IFS= read -r line; do
     mountpoint=$( echo "$line" | cut -d: -f 3 )
-done << __EOF__
+  done << __EOF__
 $( grep -F -- '0::' /proc/self/cgroup )
 __EOF__
 
   case "${found%% *}" in
-    "")
-      return 1
-      ;;
-    "/")
-      foundroot="${found##* }$mountpoint"
-      ;;
-    "$mountpoint" | /../*)
-      foundroot="${found##* }"
-      ;;
+  "")
+    return 1
+    ;;
+  "/")
+    foundroot="${found##* }$mountpoint"
+    ;;
+  "$mountpoint" | /../*)
+    foundroot="${found##* }"
+    ;;
   esac
   echo "$foundroot"
 }
@@ -177,12 +177,12 @@ cgroup_v2=$( get_cgroup_v2_path ) && ncpu_cpuset_v2=$( get_cpuset "$cgroup_v2" "
 cgroup_v2=$( get_cgroup_v2_path ) && ncpu_quota_v2=$( get_quota_v2 "$cgroup_v2" ) || ncpu_quota_v2=$ncpu_online
 
 ncpu=$( printf "%s\n%s\n%s\n%s\n%s\n" \
-               "$ncpu_online" \
-               "$ncpu_cpuset" \
-               "$ncpu_quota" \
-               "$ncpu_cpuset_v2" \
-               "$ncpu_quota_v2" \
-               | sort -n \
-               | head -n 1 )
+  "$ncpu_online" \
+  "$ncpu_cpuset" \
+  "$ncpu_quota" \
+  "$ncpu_cpuset_v2" \
+  "$ncpu_quota_v2" \
+  | sort -n \
+  | head -n 1 )
 
 sed -i.bak -r 's/^(worker_processes)(.*)$/# Commented out by '"$ME"' on '"$(date)"'\n#\1\2\n\1 '"$ncpu"';/' /etc/nginx/nginx.conf
