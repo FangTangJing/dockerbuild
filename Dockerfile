@@ -9,7 +9,6 @@ ENV PKG_RELEASE     1~trixie
 ENV DYNPKG_RELEASE  1~trixie
 
 RUN set -x \
-# create nginx user/group first, to be consistent throughout docker variants
     && groupadd --system --gid 101 nginx \
     && useradd --system --gid nginx --no-create-home --home /nonexistent --comment "nginx user" --shell /bin/false --uid 101 nginx \
     && apt-get update \
