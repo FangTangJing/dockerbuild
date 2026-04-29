@@ -1,30 +1,69 @@
-FROM debian:13.4
+FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.4
 LABEL maintainer="smile_joker1514@163.com"
 
-ENV LANG="en_US.UTF-8" 
-ENV LANGUAGE="en_US:en" 
-ENV LC_ALL="en_US.UTF-8"
-ENV TZ="Asia/Shanghai"
+ARG NGINX_VERSION=1.29.8
+ARG NJS_VERSION=0.9.4
+ARG NJS_RELEASE=1~trixie
+ARG PKG_RELEASE=1~trixie
+ARG DYNPKG_RELEASE=1~trixie
 
 RUN set -eux; \
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-            ca-certificates \
-            iputils-ping \
-            vim-tiny \
-            iproute2 \
-            dnsutils \
-            locales \
-            telnet \
-            procps \
-            curl \
-            tini \
-        ; \
-        sed -i "s#http://deb.debian.org#https://mirrors.aliyun.com#g" /etc/apt/sources.list.d/debian.sources; \
-        ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
-        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen; \
-        locale-gen en_US.UTF-8; \
-        echo "set nocompatible\nset backspace=2" >> /etc/vim/vimrc.tiny; \
-        rm -rf /var/lib/apt/lists/*
+    apt-get update; \
+    apt-get install --no-install-recommends --no-install-suggests -y gnupg1 ca-certificates; \
+    groupadd --system --gid 101 nginx; \
+    useradd --system --gid nginx --no-create-home --home /nonexistent --comment "nginx user" --shell /bin/false --uid 101 nginx; \
+    NGINX_GPGKEYS="573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 8540A6F18833A80E9C1653A42FD21310B49F6B46 9E9BE90EACBCDE69FE9B204CBCDCD8A38D88A2B3"; \
+    NGINX_GPGKEY_PATH=/etc/apt/keyrings/nginx-archive-keyring.gpg; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    found=''; \
+    for NGINX_GPGKEY in $NGINX_GPGKEYS; do \
+    for server in \
+    hkp://keyserver.ubuntu.com:80 \
+    pgp.mit.edu \
+    ; do \
+    echo "Fetching GPG key $NGINX_GPGKEY from $server"; \
+    gpg1 --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
+    done; \
+    test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
+    done; \
+    gpg1 --export $NGINX_GPGKEYS > "$NGINX_GPGKEY_PATH" ; \
+    rm -rf "$GNUPGHOME"; \
+    apt-get remove --purge --auto-remove -y gnupg1 && rm -rf /var/lib/apt/lists/*; \
+    nginxPackages=" \
+    nginx=${NGINX_VERSION}-${PKG_RELEASE} \
+    nginx-module-xslt=${NGINX_VERSION}-${DYNPKG_RELEASE} \
+    nginx-module-geoip=${NGINX_VERSION}-${DYNPKG_RELEASE} \
+    nginx-module-image-filter=${NGINX_VERSION}-${DYNPKG_RELEASE} \
+    nginx-module-njs=${NGINX_VERSION}+${NJS_VERSION}-${NJS_RELEASE} \
+    "; \
+    echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/mainline/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list; \
+    apt-get update; \
+    apt-get install --no-install-recommends --no-install-suggests -y \
+    $nginxPackages \
+    gettext-base \
+    ; \
+    apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list; \
+    # create a docker-entrypoint.d directory
+    mkdir /docker-entrypoint.d
 
-CMD ["/bin/bash"]
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/http.d/default.conf
+
+COPY docker-entrypoint.sh /
+COPY 10-listen-on-ipv6-by-default.sh /docker-entrypoint.d
+COPY 15-local-resolvers.envsh /docker-entrypoint.d
+COPY 20-envsubst-on-templates.sh /docker-entrypoint.d
+COPY 30-tune-worker-processes.sh /docker-entrypoint.d
+
+RUN mkdir -p /var/cache/nginx && chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /etc/nginx && \
+    touch /run/nginx.pid && chown -R nginx:nginx /run/nginx.pid && \
+    chmod u+s /usr/sbin/nginx
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+EXPOSE 8080
+
+STOPSIGNAL SIGQUIT
+
+CMD ["nginx", "-g", "daemon off;"]
