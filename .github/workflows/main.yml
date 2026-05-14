@@ -39,4 +39,4 @@ jobs:
           #              linux/s390x
           push: true
           tags: |
-            registry.cn-shanghai.aliyuncs.com/devops_infra/nginx:1.31.0
+            registry.cn-shanghai.aliyuncs.com/devops_infra/nginx:1.30.1
