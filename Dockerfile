@@ -9,6 +9,7 @@ ENV PKG_RELEASE     1~trixie
 ENV DYNPKG_RELEASE  1~trixie
 
 RUN set -x \
+# create nginx user/group first, to be consistent throughout docker variants
     && groupadd --system --gid 101 nginx \
     && useradd --system --gid nginx --no-create-home --home /nonexistent --comment "nginx user" --shell /bin/false --uid 101 nginx \
     && apt-get update \
@@ -42,7 +43,8 @@ RUN set -x \
     " \
     && case "$dpkgArch" in \
         amd64|arm64) \
-            echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list \
+# arches officialy built by upstream
+            echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/mainline/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list \
             && apt-get update \
             ;; \
         *) \
@@ -70,10 +72,10 @@ RUN set -x \
             && ( \
                 cd "$tempDir" \
                 && export CARGO_HOME="$tempDir/.cargo" \
-                && REVISION="${NGINX_VERSION}-${PKG_RELEASE}" \
+                && REVISION="b151aac903a6fc121d57f0909415381d0a1c1bbd" \
                 && REVISION=${REVISION%~*} \
                 && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${REVISION}.tar.gz \
-                && PKGOSSCHECKSUM="a090f4aecd628ab4b4124376efa55f617a272f9bae4e306df9b659b1b850133b0806cac31fb2a72faf1cc36bde8f5a19f4f5da5fd73502d3bbe374697920344e *${REVISION}.tar.gz" \
+                && PKGOSSCHECKSUM="72c13cfedc25a6c1e01c24dd1f736b0fefd1ef7f73ef569e2726fc99c0137327d2e71c8694bd8b0157be2a7247ec1769904746a852e7698caf7df8a5b0040440 *${REVISION}.tar.gz" \
                 && if [ "$(openssl sha512 -r ${REVISION}.tar.gz)" = "$PKGOSSCHECKSUM" ]; then \
                     echo "pkg-oss tarball checksum verification succeeded!"; \
                 else \
@@ -124,17 +126,15 @@ RUN set -x \
 # forward request and error logs to docker log collector
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log \
-
+# create a docker-entrypoint.d directory
     && mkdir /docker-entrypoint.d
-
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/http.d/default.conf
 
 COPY docker-entrypoint.sh /
 COPY 10-listen-on-ipv6-by-default.sh /docker-entrypoint.d
 COPY 15-local-resolvers.envsh /docker-entrypoint.d
 COPY 20-envsubst-on-templates.sh /docker-entrypoint.d
 COPY 30-tune-worker-processes.sh /docker-entrypoint.d
+
 
 RUN mkdir -p /var/cache/nginx && chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /etc/nginx && \
