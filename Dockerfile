@@ -1,7 +1,7 @@
 FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.4
 LABEL maintainer="smile_joker1514@163.com"
 
-ENV NGINX_VERSION   1.30.2
+ENV NGINX_VERSION   1.31.1
 ENV NJS_VERSION     0.9.9
 ENV NJS_RELEASE     1~trixie
 ENV ACME_VERSION    0.4.1
