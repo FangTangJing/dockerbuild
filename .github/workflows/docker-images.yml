@@ -121,7 +121,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+#          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
@@ -180,7 +180,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+#          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
 
   build-app-images:
@@ -235,7 +235,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+#          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
 
   python-images:
@@ -289,7 +289,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+#          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
@@ -348,7 +348,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+#          devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
