@@ -125,7 +125,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
-        image-ref: devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+        image-ref: kubeop/${{ matrix.images.name }}:${{ env.tag }}
         severity: "CRITICAL,HIGH"
 
   build-base-images:
@@ -290,7 +290,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
-        image-ref: devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+        image-ref: kubeop/${{ matrix.images.name }}:${{ env.tag }}
         severity: "CRITICAL,HIGH"
 
   python-apps:
@@ -348,5 +348,5 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
-        image-ref: devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+        image-ref: kubeop/${{ matrix.images.name }}:${{ env.tag }}
         severity: "CRITICAL,HIGH"
