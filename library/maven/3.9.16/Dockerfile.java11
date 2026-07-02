@@ -1,5 +1,5 @@
 FROM kubeop/openjdk:11-jdk
-LABEL maintainer="Sonic Ma <sonic.ma@outlook.com>"
+LABEL maintainer="smile_joker1514@163.com"
 
 ARG MAVEN_VERSION=3.9.16
 ARG user=jenkins
@@ -12,10 +12,10 @@ ENV MAVEN_HOME=/usr/share/maven
 RUN set -eux; \
       apt-get update; \
       apt-get install -y --no-install-recommends \
-            ca-certificates \
-            curl \
-            git \
-            openssh-client \
+      ca-certificates \
+      curl \
+      git \
+      openssh-client \
       ; \
       rm -rf /var/lib/apt/lists/*; \
       groupadd -g ${gid} ${group}; \

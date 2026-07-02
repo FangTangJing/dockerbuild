@@ -1,5 +1,5 @@
 FROM kubeop/openjdk:21-jdk
-LABEL maintainer="Sonic Ma <sonic.ma@outlook.com>"
+LABEL maintainer="smile_joker1514@163.com"
 
 ARG JENKINS_VERSION=2.555.2
 ARG PLUGIN_CLI_VERSION=2.14.0
@@ -33,19 +33,19 @@ ENV JENKINS_UC_DOWNLOAD_URL="https://mirrors.ustc.edu.cn/jenkins/plugins/"
 RUN set -eux; \
       apt-get update; \
       apt-get install -y --no-install-recommends \
-            ca-certificates \
-            curl \
-            git \
-            gnupg \
-            gpg \
-            libfontconfig1 \
-            libfreetype6 \
-            procps \
-            openssh-client \
-            tini \
-            unzip \
-            rsync \
-            tzdata \
+      ca-certificates \
+      curl \
+      git \
+      gnupg \
+      gpg \
+      libfontconfig1 \
+      libfreetype6 \
+      procps \
+      openssh-client \
+      tini \
+      unzip \
+      rsync \
+      tzdata \
       ; \
       rm -rf /var/lib/apt/lists/*; \
       groupadd -g ${gid} ${group}; \

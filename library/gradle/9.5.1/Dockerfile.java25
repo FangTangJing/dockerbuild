@@ -1,5 +1,5 @@
 FROM kubeop/openjdk:25-jdk
-LABEL maintainer="Sonic Ma <sonic.ma@outlook.com>"
+LABEL maintainer="smile_joker1514@163.com"
 
 ARG GRADLE_VERSION=9.5.1
 ARG user=jenkins
@@ -12,15 +12,15 @@ ENV GRADLE_HOME=/usr/local/gradle
 RUN set -eux; \
       apt-get update; \
       apt-get install -y --no-install-recommends \
-            unzip \
-            wget \
-            \
-            bzr \
-            git \
-            git-lfs \
-            mercurial \
-            openssh-client \
-            subversion \
+      unzip \
+      wget \
+      \
+      bzr \
+      git \
+      git-lfs \
+      mercurial \
+      openssh-client \
+      subversion \
       ; \
       rm -rf /var/lib/apt/lists/*; \
       groupadd -g ${gid} ${group}; \
