@@ -60,8 +60,7 @@ COPY 30-tune-worker-processes.sh /docker-entrypoint.d
 RUN mkdir -p /var/cache/nginx && chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /etc/nginx && \
     touch /run/nginx.pid && chown -R nginx:nginx /run/nginx.pid && \
-    chmod u+s /usr/sbin/nginx && \
-    chmod +x /docker-entrypoint.sh
+    chmod u+s /usr/sbin/nginx
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
