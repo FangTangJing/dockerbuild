@@ -20,6 +20,7 @@ RUN set -eux; \
     libgcc \
     libstdc++ \
     ca-certificates \
+    netcat-openbsd \
     busybox-extras \
     ; \
     rm -rf /var/cache/apk/*; \
