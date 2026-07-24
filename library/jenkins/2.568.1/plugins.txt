@@ -72,6 +72,7 @@ script-security:latest
 snakeyaml-api:latest
 sonar:latest
 ssh-credentials:latest
+ssh-agent:latest
 structs:latest
 timestamper:latest
 token-macro:latest
