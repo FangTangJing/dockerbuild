@@ -1,4 +1,4 @@
-FROM kubeop/debian:13
+FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13
 LABEL maintainer="smile_joker1514@163.com"
 
 ARG NODE_VERSION=26.7.0
