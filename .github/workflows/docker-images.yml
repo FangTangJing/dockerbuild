@@ -102,9 +102,9 @@ jobs:
         #registry: registry.cn-shanghai.aliyuncs.com
         #username: ${{ secrets.ACR_USERNAME }}
         #password: ${{ secrets.ACR_PASSWORD }}
-        registry: swr.cn-east-3.myhuaweicloud.com
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWORD }}
+        registry: ccr.ccs.tencentyun.com/devops_infra/devops_infra
+        username: ${{ secrets.CCR_USERNAME }}
+        password: ${{ secrets.CCR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -163,9 +163,9 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: swr.cn-east-3.myhuaweicloud.com
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWORD }}
+        registry: ccr.ccs.tencentyun.com/devops_infra/devops_infra
+        username: ${{ secrets.CCR_USERNAME }}
+        password: ${{ secrets.CCR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -220,9 +220,9 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: swr.cn-east-3.myhuaweicloud.com
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWORD }}
+        registry: ccr.ccs.tencentyun.com/devops_infra/devops_infra
+        username: ${{ secrets.CCR_USERNAME }}
+        password: ${{ secrets.CCR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -276,9 +276,9 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: swr.cn-east-3.myhuaweicloud.com
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWORD }}
+        registry: ccr.ccs.tencentyun.com/devops_infra/devops_infra
+        username: ${{ secrets.CCR_USERNAME }}
+        password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
@@ -336,9 +336,9 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: swr.cn-east-3.myhuaweicloud.com
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWORD }}
+        registry: ccr.ccs.tencentyun.com/devops_infra/devops_infra
+        username: ${{ secrets.CCR_USERNAME }}
+        password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
