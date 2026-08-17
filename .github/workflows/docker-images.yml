@@ -99,9 +99,12 @@ jobs:
     - name: Login to ACR
       uses: docker/login-action@v4
       with:
-        registry: registry.cn-shanghai.aliyuncs.com
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        #registry: registry.cn-shanghai.aliyuncs.com
+        #username: ${{ secrets.ACR_USERNAME }}
+        #password: ${{ secrets.ACR_PASSWORD }}
+        registry: swr.cn-east-3.myhuaweicloud.com
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -157,9 +160,12 @@ jobs:
     - name: Login to ACR
       uses: docker/login-action@v4
       with:
-        registry: registry.cn-shanghai.aliyuncs.com
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+#        registry: registry.cn-shanghai.aliyuncs.com
+#        username: ${{ secrets.ACR_USERNAME }}
+#        password: ${{ secrets.ACR_PASSWORD }}
+        registry: swr.cn-east-3.myhuaweicloud.com
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -211,9 +217,12 @@ jobs:
     - name: Login to ACR
       uses: docker/login-action@v4
       with:
-        registry: registry.cn-shanghai.aliyuncs.com
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+#        registry: registry.cn-shanghai.aliyuncs.com
+#        username: ${{ secrets.ACR_USERNAME }}
+#        password: ${{ secrets.ACR_PASSWORD }}
+        registry: swr.cn-east-3.myhuaweicloud.com
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -264,10 +273,12 @@ jobs:
     - name: Login to ACR
       uses: docker/login-action@v4
       with:
-        registry: registry.cn-shanghai.aliyuncs.com
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-
+#        registry: registry.cn-shanghai.aliyuncs.com
+#        username: ${{ secrets.ACR_USERNAME }}
+#        password: ${{ secrets.ACR_PASSWORD }}
+        registry: swr.cn-east-3.myhuaweicloud.com
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
@@ -322,10 +333,12 @@ jobs:
     - name: Login to ACR
       uses: docker/login-action@v4
       with:
-        registry: registry.cn-shanghai.aliyuncs.com
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-
+#        registry: registry.cn-shanghai.aliyuncs.com
+#        username: ${{ secrets.ACR_USERNAME }}
+#        password: ${{ secrets.ACR_PASSWORD }}
+        registry: swr.cn-east-3.myhuaweicloud.com
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
