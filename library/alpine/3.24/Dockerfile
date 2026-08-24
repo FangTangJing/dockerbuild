@@ -1,5 +1,5 @@
 FROM alpine:3.24
-LABEL maintainer="smile_joker1514@163.com""
+LABEL maintainer="smile_joker1514@163.com"
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
