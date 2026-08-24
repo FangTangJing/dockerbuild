@@ -124,7 +124,8 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          # hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
