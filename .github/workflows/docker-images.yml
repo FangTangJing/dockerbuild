@@ -102,9 +102,6 @@ jobs:
         registry: registry.cn-shanghai.aliyuncs.com
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-        # registry: hkccr.ccs.tencentyun.com
-        # username: ${{ secrets.CCR_USERNAME }}
-        # password: ${{ secrets.CCR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -165,9 +162,6 @@ jobs:
         registry: registry.cn-shanghai.aliyuncs.com
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-        # registry: hkccr.ccs.tencentyun.com
-        # username: ${{ secrets.CCR_USERNAME }}
-        # password: ${{ secrets.CCR_PASSWORD }}
 
     - name: Set args
       run: |
@@ -224,10 +218,6 @@ jobs:
         registry: registry.cn-shanghai.aliyuncs.com
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-        # registry: hkccr.ccs.tencentyun.com
-        # username: ${{ secrets.CCR_USERNAME }}
-        # password: ${{ secrets.CCR_PASSWORD }}
-
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
@@ -282,9 +272,6 @@ jobs:
         registry: registry.cn-shanghai.aliyuncs.com
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-        # registry: hkccr.ccs.tencentyun.com
-        # username: ${{ secrets.CCR_USERNAME }}
-        # password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
@@ -305,7 +292,6 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          # hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
           registry.cn-shanghai.aliyuncs.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
@@ -345,9 +331,6 @@ jobs:
         registry: registry.cn-shanghai.aliyuncs.com
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-        # registry: hkccr.ccs.tencentyun.com
-        # username: ${{ secrets.CCR_USERNAME }}
-        # password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
       run: |
         if [[ "${{ matrix.images.args }}" != "" ]]; then
