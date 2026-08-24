@@ -11,3 +11,7 @@
 # Vscode files
 .vscode
 
+# Idea project files
+*.ipr
+.idea
+

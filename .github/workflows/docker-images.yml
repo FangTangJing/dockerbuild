@@ -102,7 +102,7 @@ jobs:
         #registry: registry.cn-shanghai.aliyuncs.com
         #username: ${{ secrets.ACR_USERNAME }}
         #password: ${{ secrets.ACR_PASSWORD }}
-        registry: ccr.ccs.tencentyun.com
+        registry: hkccr.ccs.tencentyun.com
         username: ${{ secrets.CCR_USERNAME }}
         password: ${{ secrets.CCR_PASSWORD }}
 
@@ -124,7 +124,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          ccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
@@ -163,7 +163,7 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: ccr.ccs.tencentyun.com
+        registry: hkccr.ccs.tencentyun.com
         username: ${{ secrets.CCR_USERNAME }}
         password: ${{ secrets.CCR_PASSWORD }}
 
@@ -185,7 +185,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          ccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
 
   build-app-images:
     needs:
@@ -220,7 +220,7 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: ccr.ccs.tencentyun.com
+        registry: hkccr.ccs.tencentyun.com
         username: ${{ secrets.CCR_USERNAME }}
         password: ${{ secrets.CCR_PASSWORD }}
 
@@ -242,7 +242,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          ccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
 
   python-images:
     needs:
@@ -276,7 +276,7 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: ccr.ccs.tencentyun.com
+        registry: hkccr.ccs.tencentyun.com
         username: ${{ secrets.CCR_USERNAME }}
         password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
@@ -297,7 +297,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          ccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
@@ -336,7 +336,7 @@ jobs:
 #        registry: registry.cn-shanghai.aliyuncs.com
 #        username: ${{ secrets.ACR_USERNAME }}
 #        password: ${{ secrets.ACR_PASSWORD }}
-        registry: ccr.ccs.tencentyun.com
+        registry: hkccr.ccs.tencentyun.com
         username: ${{ secrets.CCR_USERNAME }}
         password: ${{ secrets.CCR_PASSWORD }}
     - name: Set args
@@ -357,7 +357,7 @@ jobs:
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
         push: true
         tags: |
-          ccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
+          hkccr.ccs.tencentyun.com/devops_infra/${{ matrix.images.name }}:${{ env.tag }}
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.35.0
       with:
