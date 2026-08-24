@@ -119,6 +119,8 @@ jobs:
     - name: Build and Push images
       uses: docker/build-push-action@v7
       with:
+        provenance: mode=max
+        sbom: true
         platforms: linux/amd64,linux/arm64
         context: library/${{ matrix.images.name }}/${{ matrix.images.tag }}
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
@@ -180,6 +182,8 @@ jobs:
     - name: Build and Push images
       uses: docker/build-push-action@v7
       with:
+        provenance: mode=max
+        sbom: true
         platforms: linux/amd64,linux/arm64
         context: library/${{ matrix.images.name }}/${{ matrix.images.tag }}
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
@@ -237,6 +241,8 @@ jobs:
     - name: Build and Push images
       uses: docker/build-push-action@v7
       with:
+        provenance: mode=max
+        sbom: true
         platforms: linux/amd64,linux/arm64
         context: library/${{ matrix.images.name }}/${{ matrix.images.tag }}
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
@@ -292,6 +298,8 @@ jobs:
     - name: Build and Push images
       uses: docker/build-push-action@v7
       with:
+        provenance: mode=max
+        sbom: true
         platforms: linux/amd64,linux/arm64
         context: library/${{ matrix.images.name }}/${{ matrix.images.tag }}
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
@@ -353,6 +361,8 @@ jobs:
     - name: Build and Push images
       uses: docker/build-push-action@v7
       with:
+        provenance: mode=max
+        sbom: true
         platforms: linux/amd64,linux/arm64
         context: library/${{ matrix.images.name }}/${{ matrix.images.tag }}
         file: library/${{ matrix.images.name }}/${{ matrix.images.tag }}/${{ env.file }}
