@@ -1,7 +1,7 @@
 FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.5
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG NODE_VERSION=22.23.2
+ARG NODE_VERSION=24.20.0
 ARG YARN_VERSION=1.22.22
 
 RUN set -eux; \

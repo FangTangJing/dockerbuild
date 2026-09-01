@@ -1,7 +1,7 @@
 FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.5
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG NGINX_VERSION=1.30.4
+ARG NGINX_VERSION=1.31.4
 ARG NJS_VERSION=1.0.0
 ARG NJS_RELEASE=1~trixie
 ARG ACME_VERSION=0.4.1
@@ -38,7 +38,7 @@ RUN set -eux; \
     nginx-module-njs=${NGINX_VERSION}+${NJS_VERSION}-${NJS_RELEASE} \
     nginx-module-acme=${NGINX_VERSION}+${ACME_VERSION}-${PKG_RELEASE} \
     "; \
-    echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list; \
+    echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/mainline/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list; \
     apt-get update; \
     apt-get install --no-install-recommends --no-install-suggests -y \
     $nginxPackages \

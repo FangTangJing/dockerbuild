@@ -1,7 +1,7 @@
 FROM registry.cn-shanghai.aliyuncs.com/devops_infra/debian:13.5
 LABEL maintainer="smile_joker1514@163.com"
 
-ARG KUBEDOG_VERSION=0.13.0
+ARG KUBE_VERSION=v1.36.4
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
@@ -14,16 +14,16 @@ RUN set -eux; \
     arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
     case "$arch" in \
     'amd64') \
-    url="https://tuf.kubedog.werf.io/targets/releases/${KUBEDOG_VERSION}/linux-${arch}/bin/kubedog"; \
+    url="https://dl.k8s.io/release/${KUBE_VERSION}/bin/linux/${arch}/kubectl"; \
     ;; \
     'arm64') \
-    url="https://tuf.kubedog.werf.io/targets/releases/${KUBEDOG_VERSION}/linux-${arch}/bin/kubedog"; \
+    url="https://dl.k8s.io/release/${KUBE_VERSION}/bin/linux/${arch}/kubectl"; \
     ;; \
     *) \
     echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
     esac; \
-    curl -fsSL -o /usr/bin/kubedog $url; \
-    chmod 755 /usr/bin/kubedog; \
-    kubedog version
+    curl -fsSL -o /usr/bin/kubectl $url; \
+    chmod 755 /usr/bin/kubectl; \
+    kubectl version --client
 
 USER jenkins
